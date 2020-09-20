@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import systemRoutes from './module/system'
+import systemRoutes from './modules/system'
 
 Vue.use(VueRouter)
 

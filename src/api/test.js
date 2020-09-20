@@ -1,6 +1,6 @@
 import { httpBinInstance } from './index'
 
-export const getHttpBinTest = (param) => {
+export const getHttpbinTest = (param) => {
   return httpBinInstance.request({
     url: '/get?param=' + param,
   })
