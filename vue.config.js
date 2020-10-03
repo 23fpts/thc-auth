@@ -1,7 +1,7 @@
 const path = require('path')
 const resolve = (dir) => path.join(__dirname, dir)
 
-const port = process.env.port || process.env.npm_config_port || 8180 // dev port
+const port = process.env.port || process.env.npm_config_port || 8181 // dev port
 
 module.exports = {
   chainWebpack: (config) => {
