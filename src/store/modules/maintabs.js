@@ -1,9 +1,9 @@
 // menuList是我们自己造的菜单数据，之前我们把它在LayoutMenu里面写死的。
 // 现在我们把它挪到state里面来，因为menuList数据被多个组件使用，并且需要异步加载。
 const state = {
-  //存放{ route: 路由路径, name: tab显示名称}对象数组
+  // 存放{ route: 路由路径, name: tab显示名称}对象数组
   maintabs: [{ route: '/home/firstpage', name: '首页', closable: false }],
-  //当前被激活显示的那个Tab内容对应的route activeRoute用来表示多个tab，哪一个处于激活显示状态。用router来做唯一标识。
+  // 当前被激活显示的那个Tab内容对应的route activeRoute用来表示多个tab，哪一个处于激活显示状态。用router来做唯一标识。
   activeRoute: '/home/firstpage',
   menuList: [
     {
@@ -19,6 +19,7 @@ const state = {
         { id: 3, name: '用户管理', path: '/home/sysuser' },
         { id: 4, name: '角色管理', path: '/home/sysrole' },
         { id: 6, name: '组织管理', path: '/home/sysorg' },
+        { id: 7, name: '菜单管理', path: '/home/sysmenu' },
       ],
     },
     {

@@ -30,6 +30,11 @@ const menuRouter = [
     path: 'sysorg',
     component: () => import('@/views/system/SystemOrg.vue'),
   },
+  {
+    name: 'sysmenu',
+    path: 'sysmenu',
+    component: () => import('@/views/system/SystemMenu.vue'),
+  },
 ]
 
 export default [

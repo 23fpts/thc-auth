@@ -34,7 +34,9 @@ export const refreshToken = () => {
   })
 }
 
-//组织机构树形列表接口
+// org
+
+// 组织机构树形列表接口
 export const getOrgTree = (orgQueryForm) => {
   return jwtServerInstance.request({
     url: '/sysorg/tree',
@@ -71,5 +73,45 @@ export const deleteOrg = (orgForm) => {
     url: '/sysorg/delete',
     method: 'post',
     data: orgForm,
+  })
+}
+
+//=====================菜单管理接口开始========================
+//完整菜单树形列表接口
+export const getMenuTree = (menuQueryForm) => {
+  return jwtServerInstance.request({
+    url: '/sysmenu/tree',
+    method: 'post',
+    data: qs.stringify({
+      menuNameLike: menuQueryForm.name,
+      menuStatus: menuQueryForm.status,
+    }),
+  })
+}
+
+//更新菜单的一条数据记录
+export const updateMenu = (menuForm) => {
+  return jwtServerInstance.request({
+    url: '/sysmenu/update',
+    method: 'post',
+    data: menuForm,
+  })
+}
+
+//新增一条菜单数据记录
+export const addMenu = (menuForm) => {
+  return jwtServerInstance.request({
+    url: '/sysmenu/add',
+    method: 'post',
+    data: menuForm,
+  })
+}
+
+//删除一条菜单数据记录
+export const deleteMenu = (menuForm) => {
+  return jwtServerInstance.request({
+    url: '/sysmenu/delete',
+    method: 'post',
+    data: menuForm,
   })
 }
