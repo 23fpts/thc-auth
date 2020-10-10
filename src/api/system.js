@@ -115,3 +115,44 @@ export const deleteMenu = (menuForm) => {
     data: menuForm,
   })
 }
+
+//=====================角色管理接口开始========================
+//角色列表查询接口
+export const getRoles = (roleLike) => {
+  return jwtServerInstance.request({
+    url: '/sysrole/query',
+    method: 'post',
+    data: qs.stringify({
+      roleLike: roleLike,
+    }),
+  })
+}
+
+//更新sys_role的一条数据记录
+export const updateRole = (roleForm) => {
+  return jwtServerInstance.request({
+    url: '/sysrole/update',
+    method: 'post',
+    data: roleForm,
+  })
+}
+
+//新增一条sys_api数据记录
+export const addRole = (roleForm) => {
+  return jwtServerInstance.request({
+    url: '/sysrole/add',
+    method: 'post',
+    data: roleForm,
+  })
+}
+
+//删除一条sys_role数据记录
+export const deleteRole = (roleId) => {
+  return jwtServerInstance.request({
+    url: '/sysrole/delete',
+    method: 'post',
+    data: qs.stringify({
+      roleId: roleId,
+    }),
+  })
+}

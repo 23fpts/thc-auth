@@ -23,7 +23,7 @@ VueRouter.prototype.replace = function replace(location) {
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes: [...systemRoutes],
+  routes: [...systemRoutes], // ... 代表在数组后面再加上sysRoutes这个数组
 })
 // to代表到哪去、from代表从哪来、next()是一个函数表示用户下一部路由动作
 // 用户每换一个界面或组件，更新一次令牌。（这个操作还可以优化，比如：多长时间窗口内，不做更新令牌的操作）
