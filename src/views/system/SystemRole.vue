@@ -74,14 +74,34 @@
         <el-button @click="handleCloseDialog" size="mini">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 权限管理 -->
+    <el-dialog :title="permDialogTitle" :visible.sync="permDialogVisible">
+      <el-row>
+        <el-col :span="12">
+          <multi-tree :data="menuData" :labelPropName="menuLabelPropName" :buttonName="menuButtonName" :defaultExpandedKeys="menuDefaultExpandedKeys" :defaultCheckedKeys="menuDefaultCheckedKeys" @handleCheckedKeys="handleMenuCheckedKeys"></multi-tree>
+        </el-col>
+        <el-col :span="12">
+          <multi-tree :data="apiData" :labelPropName="apiLabelPropName" :buttonName="apiButtonName" :defaultExpandedKeys="apiDefaultExpandedKeys" :defaultCheckedKeys="apiDefaultCheckedKeys" @handleCheckedKeys="handleApiCheckedKeys"></multi-tree>
+        </el-col>
+      </el-row>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
 import { getRoles, updateRole, addRole, deleteRole } from '@/api/system'
+import {
+  getMenuCheckedTree,
+  saveMenuCheckedKeys,
+  getApiCheckedTree,
+  saveApiCheckedKeys
+} from '@/api/system'
+import axios from 'axios'
+import MultiTree from '../../components/MultiTree'
 export default {
   name: 'SystemRole',
+  components: { MultiTree },
   data() {
     return {
       tableData: [], // //table表格数据
@@ -107,7 +127,20 @@ export default {
         roleCode: [
           { required: true, message: '请输入角色编码', trigger: 'blur' }
         ]
-      }
+      },
+      handlingRoleId: null, //当前正在分配权限的角色id，点击行末“分配权限”按钮的时候赋值
+      permDialogVisible: false, //分配权限的弹出框默认不可见
+      permDialogTitle: '', //弹出框标题，点击行末“分配权限”按钮的时候赋值
+      menuData: [], //菜单树数据
+      menuLabelPropName: 'menuName', //菜单树数据中的label显示内容字段名称
+      menuButtonName: '保存菜单查看权限', //保存权限按钮的名字
+      menuDefaultExpandedKeys: [], //默认展开节点
+      menuDefaultCheckedKeys: [], //默认勾选节点
+      apiData: [],
+      apiLabelPropName: 'apiName',
+      apiButtonName: '保存接口访问权限',
+      apiDefaultExpandedKeys: [],
+      apiDefaultCheckedKeys: []
     }
   },
 
@@ -226,6 +259,40 @@ export default {
       if (roles.success) {
         this.tableData = roles.data
       }
+    },
+    //点击行末“分配权限”按钮的时候触发，在《角色管理CURD》章节
+    assignPerm(index, row) {
+      console.log(index)
+      console.log(row)
+      this.handlingRoleId = row.id //当前正在分配权限的角色id
+      let _this = this
+      // axios.all的作用是多个请求多完成之后才进入then方法。res1是getMenuCheckedTree请求结果，res2是getApiCheckedTree的请求结果。
+      // 最后将请求结果赋值给页面绑定数据
+      axios.all([getMenuCheckedTree(row.id), getApiCheckedTree(row.id)]).then(
+        axios.spread(function(res1, res2) {
+          console.log(res1)
+          console.log(res2)
+          // 两个请求都执行完成后，进入该函数
+          _this.menuData = res1.data.tree
+          _this.menuDefaultExpandedKeys = res1.data.expandedKeys
+          _this.menuDefaultCheckedKeys = res1.data.checkedKeys
+          _this.apiData = res2.data.tree
+          _this.apiDefaultExpandedKeys = res2.data.expandedKeys
+          _this.apiDefaultCheckedKeys = res2.data.checkedKeys
+          _this.permDialogVisible = true
+          _this.permDialogTitle = row.roleName + '角色:权限分配'
+        })
+      )
+    },
+    handleMenuCheckedKeys(checkedKeys) {
+      saveMenuCheckedKeys(this.handlingRoleId, checkedKeys).then(res => {
+        this.$message({ message: res.data, type: 'success' })
+      })
+    },
+    handleApiCheckedKeys(checkedKeys) {
+      saveApiCheckedKeys(this.handlingRoleId, checkedKeys).then(res => {
+        this.$message({ message: res.data, type: 'success' })
+      })
     }
   },
   beforeRouteEnter(to, from, next) {

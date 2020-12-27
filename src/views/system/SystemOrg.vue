@@ -97,14 +97,14 @@ export default {
       tableData: [],
       orgQueryform: {
         name: '',
-        status: null
+        status: null,
       },
       elTreeDisabled: false,
       elTreeProps: {
         // el-tree-select配置项（必选）
         value: 'id',
         label: 'orgName',
-        children: 'children'
+        children: 'children',
       },
       dialogFormVisible: false,
       dialogTitle: '',
@@ -114,33 +114,33 @@ export default {
         orgName: '',
         phone: '',
         email: '',
-        sort: ''
+        sort: '',
       },
       dialogFormRules: {
         orgPid: [
-          { required: true, message: '请选择上级组织机构', trigger: 'blur' }
+          { required: true, message: '请选择上级组织机构', trigger: 'blur' },
         ],
         orgName: [
-          { required: true, message: '请输入组织机构名称', trigger: 'blur' }
+          { required: true, message: '请输入组织机构名称', trigger: 'blur' },
         ],
         sort: [
           {
             required: true,
             message: '请输入当前组织机构在同级组织内的排序序号',
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         email: [
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' },
         ],
         phone: [
           {
             pattern: /^1[34578]\d{9}$/,
             message: '目前只支持中国大陆的手机号码',
-            trigger: 'blur'
-          }
-        ]
-      }
+            trigger: 'blur',
+          },
+        ],
+      },
     }
   },
   created() {},
@@ -150,33 +150,34 @@ export default {
       console.log(index, row)
     },
     handleDelete(index, row) {
-      this.$confirm('确定删除[' + row.orgName + ']?').then(_ => {
+      this.$confirm('确定删除[' + row.orgName + ']?').then((_) => {
         console.log(_)
         this.dialogForm = { ...row } //从被选行赋值给dialogForm
         deleteOrg(this.dialogForm) //调用axios接口api
-          .then(res => {
+          .then((res) => {
             this.submitQueryForm() //删除之后，重新查询table
             this.$message({ message: res.data, type: 'success' })
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message({ message: err.message, type: 'success' })
           })
       })
     },
     // statusFormat(row, column) {
     statusFormat(row) {
-      if (row.status) {
-        return '已禁用'
-      } else {
-        return '未禁用'
-      }
+      return this.$store.getters.getSysDictName('common.status', row.status)
+      // if (row.status) {
+      //   return '已禁用'
+      // } else {
+      //   return '未禁用'
+      // }
     },
     submitQueryForm() {
       console.log('submit')
       getOrgTree({
         name: this.orgQueryform.name,
-        status: this.orgQueryform.status
-      }).then(res => {
+        status: this.orgQueryform.status,
+      }).then((res) => {
         console.log(res)
         this.setData(res)
       })
@@ -205,25 +206,25 @@ export default {
       this.dialogForm.sort = ''
     },
     submitDialogForm() {
-      this.$refs.dialogForm.validate(valid => {
+      this.$refs.dialogForm.validate((valid) => {
         //根据上文的表单验证规则验证dialogForm表单
         if (valid) {
           //如果校验成功
           this.$confirm('确定提交数据么?') //让用户再次确认是否提交
-            .then(_ => {
+            .then((_) => {
               console.log(_)
               //用户确认提交
               if (this.elTreeDisabled) {
                 //elTreeDisabled=true表示是修改操作，handleEdit设置的
                 updateOrg(this.dialogForm) //调用修改组织结构接口
-                  .then(res => {
+                  .then((res) => {
                     this.$message({ message: res.data, type: 'success' }) //给用户提示信息
                     this.submitQueryForm() //修改之后，重新查询table
                     this.handleCloseDialog() //重置表单数据（在下文中介绍）
                   })
               } else {
                 //elTreeDisabled=false表示是新增操作，handleAdd设置的
-                addOrg(this.dialogForm).then(res => {
+                addOrg(this.dialogForm).then((res) => {
                   //调用新增组织结构接口
                   this.$message({ message: res.data, type: 'success' }) //给用户提示信息
                   this.submitQueryForm() //新增之后，重新查询table
@@ -231,7 +232,7 @@ export default {
                 })
               }
             })
-            .catch(_ => {
+            .catch((_) => {
               console.log(_)
               this.handleCloseDialog()
             }) //取消新增或修改也要重置表单
@@ -251,12 +252,12 @@ export default {
     },
     beforeDialogClose(done) {
       this.$confirm('确认关闭？')
-        .then(_ => {
+        .then((_) => {
           console.log(_)
           this.$refs['dialogForm'].resetFields()
           done()
         })
-        .catch(_ => {
+        .catch((_) => {
           console.log(_)
         })
     },
@@ -264,13 +265,13 @@ export default {
     handleTreeSelected(value) {
       this.dialogForm.orgPid = value
       this.$refs.dialogForm.validateField('orgPid')
-    }
+    },
   },
   beforeRouteEnter(to, from, next) {
-    getOrgTree({ name: '', status: null }).then(res => {
-      next(vm => vm.setData(res))
+    getOrgTree({ name: '', status: null }).then((res) => {
+      next((vm) => vm.setData(res))
     })
-  }
+  },
 }
 </script>
 

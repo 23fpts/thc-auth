@@ -1,3 +1,4 @@
+import { getMenuTreeByUsername } from '@/api/system'
 // menuList是我们自己造的菜单数据，之前我们把它在LayoutMenu里面写死的。
 // 现在我们把它挪到state里面来，因为menuList数据被多个组件使用，并且需要异步加载。
 const state = {
@@ -10,27 +11,47 @@ const state = {
       name: '非菜单路由,但是需要显示Tab,请定义在这里',
       children: [{ name: '个人中心', path: '/home/personal' }],
     },
-    {
-      id: 1,
-      name: '系统管理',
-      path: '/system',
-      icon: 'el-icon-lock',
-      children: [
-        { id: 3, name: '用户管理', path: '/home/sysuser' },
-        { id: 4, name: '角色管理', path: '/home/sysrole' },
-        { id: 6, name: '组织管理', path: '/home/sysorg' },
-        { id: 7, name: '菜单管理', path: '/home/sysmenu' },
-      ],
-    },
-    {
-      id: 2,
-      name: '订单管理',
-      path: '/order',
-      icon: 'el-icon-eleme',
-      children: [{ id: 5, name: '订单详情', path: '/home/order' }],
-    },
+    // {
+    //   id: 1,
+    //   name: '系统管理',
+    //   path: '/system',
+    //   icon: 'el-icon-lock',
+    //   children: [
+    //     { id: 3, name: '用户管理', path: '/home/sysuser' },
+    //     { id: 4, name: '角色管理', path: '/home/sysrole' },
+    //     { id: 6, name: '组织管理', path: '/home/sysorg' },
+    //     { id: 7, name: '菜单管理', path: '/home/sysmenu' },
+    //   ],
+    // },
+    // {
+    //   id: 2,
+    //   name: '订单管理',
+    //   path: '/order',
+    //   icon: 'el-icon-eleme',
+    //   children: [{ id: 5, name: '订单详情', path: '/home/order' }],
+    // },
   ],
   addTabName: '',
+}
+
+//新定义一个action叫做addTab，在这个里面加载菜单数据
+const actions = {
+  addTab({ state, commit }, route) {
+    //因为menuList里面有一项非菜单路由
+    //大于等于一表示菜单已经加载过了，并且页面没刷新，
+    //只是切换路由组件,不重新加载菜单
+    if (state.menuList.length <= 1) {
+      console.log('if');
+      getMenuTreeByUsername().then((res) => {
+        console.log(res)
+        state.menuList = [state.menuList[0], ...res.data]
+        commit('addTabMutation', route) //菜单加载完成之后将Tab导航项添加
+      })
+    } else {
+      console.log('else');
+      commit('addTabMutation', route) //菜单加载完成之后将Tab导航项添加
+    }
+  },
 }
 
 // mutations是用来修改state的。
@@ -42,7 +63,7 @@ const mutations = {
   },
   // 用来向TAB中加入新的选项卡，也在点击菜单的时候调用。
   // some 是数组操作函数用来判断某个数组中是否包含某个元素。如果包含了就不再重复添加。
-  addTab(state, route) {
+  addTabMutation(state, route) {
     let isAlreadyIn = state.maintabs.some((item) => item.route === route)
     this.commit('findMenuNameByRoute', route)
     // 一般情况下setActiveRote和add是一起用所以写在一起了
@@ -81,4 +102,5 @@ const mutations = {
 export default {
   state,
   mutations,
+  actions
 }
